@@ -5,63 +5,53 @@
  *******************************************************************************************************/
 'use strict';
 
+const
+	Collection = require( './Collection' ),
+	LightMap   = require( './LightMap' );
+
 class Database
 {
 	constructor()
 	{
-		this.collections = new Map();
+		this.collections = new LightMap();
 	}
-
-	hasCollection( collection )
+	
+	hasCollection( _id )
 	{
-		return this.collections.has( collection );
+		return this.collections.has( _id );
 	}
-
+	
 	listCollections()
 	{
 		return this.collections.keys();
 	}
-
-	getCollection( collection )
+	
+	getCollections()
 	{
-		return this.collections.get( collection );
+		return this.collections;
 	}
-
-	createCollection( collection )
+	
+	getCollection( _id )
 	{
-		return this.collections.set( collection, new Map() ).keys();
+		return this.collections.get( _id );
 	}
-
-	deleteCollection( collection )
+	
+	getCollectionInformation( _id )
 	{
-		return this.collections.delete( collection );
+		return {
+			_id,
+			...this.getCollection( _id ).metadata
+		};
 	}
-
-
-
-	hasItem( collection, id )
+	
+	createCollection( _id, metadata )
 	{
-		return this.getCollection( collection ).has( id );
+		return this.collections.set( _id, new Collection( _id, metadata ) );
 	}
-
-	listItems( collection )
+	
+	deleteCollection( _id )
 	{
-		return this.getCollection( collection ).values();
-	}
-
-	getItem( collection, id )
-	{
-		return this.getCollection( collection ).get( id );
-	}
-
-	createItem( collection, id, data )
-	{
-		return this.getCollection( collection ).set( id, data );
-	}
-
-	deleteItem( collection, id )
-	{
-		return this.getCollection( collection ).delete( id );
+		return this.collections.delete( _id );
 	}
 }
 

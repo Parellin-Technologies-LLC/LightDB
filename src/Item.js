@@ -11,17 +11,19 @@ class Item
 {
 	constructor( id, data )
 	{
-		this.created = new Date().toString();
-		this.data    = data;
-		this.id      = id || UUIDv4();
+		this.created  = new Date().toString();
+		this.modified = this.created;
+		this.data     = data;
+		this.id       = id || UUIDv4();
 	}
-
+	
 	toJSON()
 	{
 		return {
 			created: this.created,
 			data: this.data,
-			id: this.id
+			id: this.id,
+			modified: this.modified
 		};
 	}
 }

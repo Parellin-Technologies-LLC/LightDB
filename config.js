@@ -50,7 +50,7 @@ module.exports = {
 			method: 'ALL',
 			exec: resolve( './lib/index' )
 		},
-
+		
 		{
 			route: '/db',
 			method: 'GET',
@@ -75,29 +75,31 @@ module.exports = {
 			exec: resolve( './lib/createCollection' )
 		},
 		{
-			route: '/db',
-			method: 'DELETE',
-			exec: resolve( './lib/deleteCollection' )
-		},
-
-
-
-
-		{
 			route: '/db/:collection',
 			method: 'POST',
 			exec: resolve( './lib/createItem' )
 		},
 		{
-			route: '/db/:collection',
-			method: 'DELETE',
+			route: '/db/:collection/:id',
+			method: 'POST',
 			exec: resolve( './lib/createItem' )
 		},
-
+		
+		
+		{
+			route: '/db',
+			method: 'DELETE',
+			exec: resolve( './lib/deleteCollection' )
+		},
 		{
 			route: '/db/:collection',
 			method: 'DELETE',
-			exec: resolve( './lib/createItem' )
+			exec: resolve( './lib/deleteItem' )
+		},
+		{
+			route: '/db/:collection/:id',
+			method: 'DELETE',
+			exec: resolve( './lib/deleteItem' )
 		},
 
 
