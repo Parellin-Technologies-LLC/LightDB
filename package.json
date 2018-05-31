@@ -35,6 +35,9 @@
 		"mocha": "^5.2.0"
 	},
 	"dependencies": {
-		"express": "^4.16.3"
+		"body-parser": "^1.18.3",
+		"express": "^4.16.3",
+		"http-response-class": "^1.2.2",
+		"uuid": "^3.2.1"
 	}
 }

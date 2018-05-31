@@ -13,11 +13,8 @@ module.exports = {
 	name,
 	version,
 	cwd: process.cwd(),
-	silent: process.env.SILENT,
-	data: process.env.DATA,
-	port: process.env.PORT,
-	root: resolve( process.env.DATA ),
-	dotfiles: 'allow',
+	silent: process.env.silent,
+	port: process.env.port,
 	timeout: 20000,
 	maximumURISize: 1600,
 	maximumHeaderSize: 4000,
@@ -25,11 +22,6 @@ module.exports = {
 	minimumHTTPVersion: 1.1,
 	speedStandard: 0.08,
 	api: [
-		{
-			route: '/',
-			method: 'ALL',
-			exec: resolve( './lib/home' )
-		},
 		{
 			route: '/ping',
 			method: 'ALL',
@@ -50,46 +42,66 @@ module.exports = {
 			method: 'ALL',
 			exec: resolve( './lib/docs' )
 		},
+
+
+
 		{
-			route: '/data*',
+			route: '/',
+			method: 'ALL',
+			exec: resolve( './lib/index' )
+		},
+
+		{
+			route: '/db',
 			method: 'GET',
-			exec: resolve( './lib/getData' )
+			exec: resolve( './lib/listCollections' )
 		},
 		{
-			route: '/data*',
-			method: 'PUT',
-			exec: resolve( './lib/upload' )
-		},
-		{
-			route: '/data*',
-			method: 'POST',
-			exec: resolve( './lib/upload' )
-		},
-		{
-			route: '/data*',
-			method: 'DELETE',
-			exec: resolve( './lib/deleteData' )
-		},
-		{
-			route: '/form*',
+			route: '/db/:collection',
 			method: 'GET',
-			exec: resolve( './lib/getData' )
+			exec: resolve( './lib/listItems' )
 		},
 		{
-			route: '/form*',
-			method: 'PUT',
-			exec: resolve( './lib/uploadForm' )
+			route: '/db/:collection/:id',
+			method: 'GET',
+			exec: resolve( './lib/getItem' )
 		},
+
+
+
 		{
-			route: '/form*',
+			route: '/db',
 			method: 'POST',
-			exec: resolve( './lib/uploadForm' )
+			exec: resolve( './lib/createCollection' )
 		},
 		{
-			route: '/form*',
+			route: '/db',
 			method: 'DELETE',
-			exec: resolve( './lib/deleteData' )
+			exec: resolve( './lib/deleteCollection' )
 		},
+
+
+
+
+		{
+			route: '/db/:collection',
+			method: 'POST',
+			exec: resolve( './lib/createItem' )
+		},
+		{
+			route: '/db/:collection',
+			method: 'DELETE',
+			exec: resolve( './lib/createItem' )
+		},
+
+		{
+			route: '/db/:collection',
+			method: 'DELETE',
+			exec: resolve( './lib/createItem' )
+		},
+
+
+
 		{
 			route: '*',
 			method: 'ALL',

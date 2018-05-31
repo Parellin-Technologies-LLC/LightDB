@@ -23,7 +23,6 @@ const
 			description,
 			'',
 			`Usage:  ${ name } [options]`,
-			`    ${ name } -d ~/data`,
 			'',
 			'    -h, --help         help menu',
 			`    -v, --version      print ${ name } version`,
@@ -31,17 +30,17 @@ const
 			`    -p, --port [port]  set the port to start ${ name } on`
 		].join( '\n' ) );
 	}
-	
+
 	function parseArguments( args, defaults = {} ) {
 		args = args.splice( 2 );
-		
+
 		return args.reduce(
 			( r, item, i ) => {
 				if( /(-s)|(--silent)/i.test( item ) ) {
-					r.SILENT = true;
+					r.silent = true;
 				} else if( /(-d)|(--data)/i.test( item ) ) {
 					const arg = args[ i + 1 ];
-					
+
 					if( !arg ) {
 						console.error( 'Argument Error: -d, --data option must be specified' );
 						process.exit( 1 );
@@ -50,7 +49,7 @@ const
 					}
 				} else if( /(-p)|(--port)/i.test( item ) ) {
 					const arg = +args[ i + 1 ];
-					
+
 					if( !arg ) {
 						console.error( 'Argument Error: -p, --port option must be a number' );
 						process.exit( 1 );
@@ -58,23 +57,23 @@ const
 						r.port = arg;
 					}
 				}
-				
+
 				return r;
 			}, defaults
 		);
 	}
-	
+
 	const
 		args = parseArguments( process.argv, {
 			silent: false,
-			port: 3000
+			port: 23000
 		} );
-	
+
 	Object.keys( args )
 		.forEach(
 			k => process.env[ k ] = process.env[ k ] || args[ k ]
 		);
-	
+
 	require( './server' )( require( './config' ) )
 		.initialize()
 		.then( inst => inst.start() );
