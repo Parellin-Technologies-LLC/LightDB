@@ -1,0 +1,40 @@
+{
+	"name": "lightdb",
+	"version": "0.0.0",
+	"description": "A tiny database for in-memory transactions",
+	"main": "index.js",
+	"scripts": {
+		"clean": "npm outdated && npm prune",
+		"cleanInstall": "rm -rf node_modules/ package-lock.json && npm i",
+		"dev": "node index.js",
+		"docs": "jsdoc -c jsdocs.js -r",
+		"lint": "eslint .",
+		"preversion": "npm test",
+		"start": "node index.js",
+		"test": "mocha --trace-warnings"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Parellin-Technologies-LLC/LightDB.git"
+	},
+	"keywords": [
+		"light",
+		"database"
+	],
+	"author": "iskore <nick@parellin.com>",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/Parellin-Technologies-LLC/LightDB/issues"
+	},
+	"homepage": "https://github.com/Parellin-Technologies-LLC/LightDB#readme",
+	"devDependencies": {
+		"chai": "^4.1.2",
+		"chai-as-promised": "^7.1.1",
+		"eslint": "^4.19.1",
+		"jsdoc-to-markdown": "^4.0.1",
+		"mocha": "^5.2.0"
+	},
+	"dependencies": {
+		"express": "^4.16.3"
+	}
+}
