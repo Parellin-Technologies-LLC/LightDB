@@ -9,20 +9,37 @@ const UUIDv4 = require( 'uuid/v4' );
 
 class Item
 {
-	constructor( id, data )
+	constructor( _id, data )
 	{
+		this._id      = _id || UUIDv4();
 		this.created  = new Date().toString();
-		this.modified = this.created;
 		this.data     = data;
-		this.id       = id || UUIDv4();
+		this.modified = this.created;
 	}
-	
+
+	getId()
+	{
+		return this._id;
+	}
+
+	getData()
+	{
+		return this.data;
+	}
+
+	updateData( d )
+	{
+		this.modified = new Date().toString();
+		this.data     = d;
+		return this;
+	}
+
 	toJSON()
 	{
 		return {
+			_id: this._id,
 			created: this.created,
 			data: this.data,
-			id: this.id,
 			modified: this.modified
 		};
 	}

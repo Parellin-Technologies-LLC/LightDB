@@ -5,57 +5,96 @@
  *******************************************************************************************************/
 'use strict';
 
-const
-	LightMap = require( './src/LightMap' );
+// const
+// 	LightMap = require( './src/LightMap' ),
+// 	Database = require( './src/Database' ),
+// 	UUIDv4   = require( 'uuid/v4' ),
+// 	_id      = 'database',
+// 	metadata = { description: 'do stuff' };
+// Database.createCollection( _id, metadata );
 
-const map = new LightMap();
+const _id     = 'database';
+const request = require( 'request' );
 
-[ 'abc', 'ab', 'a' ].sort( console.log );
+function takeCreateFrame() {
+	const totalStart = process.hrtime();
+	const tasks      = [];
+	let i            = 0;
 
-// map.set( 123, 'abc' );
-// map.set( 1, 'a' );
-// map.set( 12, 'ab' );
-map.set( 'abc', 123 );
-map.set( 'ab', 12 );
-map.set( 'a', 1 );
-
-// console.log( map );
-console.log( map.sortValues() );
-
-return;
-
-
-const
-	Database = require( './src/Database' );
-
-const
-	UUIDv4   = require( 'uuid/v4' ),
-	_id      = UUIDv4(),
-	metadata = { description: 'do stuff' };
-
-// create a collection
-
-Database.createCollection( _id, metadata );
-
-// /
-const x = Database.getCollections()
-	.reduce( ( r, [ k, v ] ) => {
-		r.push(
-			{
-				_id: v.getId(),
-				size: v.getSize(),
-				metadata: v.getMetadata()
-			}
+	for( ; i < 10; i++ ) {
+		const start = process.hrtime();
+		tasks.push(
+			new Promise(
+				( res, rej ) => request.post(
+					`http://127.0.0.1:23000/${ _id }/item`,
+					{ json: [ { key: 'value' }, { key: 'value' }, { key: 'value' } ] },
+					( e, r, d ) => {
+						res( process.hrtime( start ) );
+					}
+				)
+			)
 		);
-		
-		return r;
-	}, [] );
+	}
 
-console.log( x );
+	return Promise.all( tasks )
+		.then( d => {
+			const totalEnd = process.hrtime( totalStart );
+			const average  = d.reduce( ( r, [ x, y ] ) => {
+				r += y;
+				return r;
+			}, 0 );
 
+			return {
+				type: 'CREATE',
+				itemAverage: average / d.length,
+				totalTome: totalEnd[ 1 ]
+			};
+		} );
+}
 
-// /collections
-console.log( ...Database.listCollections() );
+function takeScanFrame() {
+	const totalStart = process.hrtime();
+	const tasks      = [];
+	let i            = 0;
 
-// /:collection
-console.log( Database.getCollectionInformation( _id ) );
+	for( ; i < 10; i++ ) {
+		const start = process.hrtime();
+		tasks.push(
+			new Promise(
+				( res, rej ) => request.get(
+					`http://127.0.0.1:23000/${ _id }/items`,
+					( e, r, d ) => {
+						res( process.hrtime( start ) );
+					}
+				)
+			)
+		);
+	}
+
+	return Promise.all( tasks )
+		.then( d => {
+			const totalEnd = process.hrtime( totalStart );
+			const average  = d.reduce( ( r, [ x, y ] ) => {
+				r += y;
+				return r;
+			}, 0 );
+
+			return {
+				type: 'SCAN',
+				itemAverage: average / d.length,
+				totalTome: totalEnd[ 1 ]
+			};
+		} );
+}
+
+function wait( n ) {
+	return new Promise(
+		res => setTimeout( () => res(), n )
+	);
+}
+
+Promise.all( [
+	takeCreateFrame(), wait( 100 ), takeScanFrame(), wait( 100 )
+] )
+	.then( d => d.filter( Boolean ).sort() )
+	.then( d => d.forEach( i => console.log( `${ JSON.stringify( i ) },` ) ) );

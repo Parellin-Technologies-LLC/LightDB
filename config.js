@@ -46,23 +46,51 @@ module.exports = {
 
 
 		{
+			route: '/json',
+			method: 'GET',
+			exec: resolve( './lib/toJSON' )
+		},
+
+		{
 			route: '/',
-			method: 'ALL',
+			method: 'GET',
 			exec: resolve( './lib/index' )
 		},
-		
 		{
-			route: '/db',
+			route: '/collections',
 			method: 'GET',
 			exec: resolve( './lib/listCollections' )
 		},
 		{
-			route: '/db/:collection',
+			route: '/:collection',
+			method: 'GET',
+			exec: resolve( './lib/getCollection' )
+		},
+		{
+			route: '/:collection',
+			method: 'POST',
+			exec: resolve( './lib/createCollection' )
+		},
+		{
+			route: '/:collection',
+			method: 'PUT',
+			exec: resolve( './lib/updateCollection' )
+		},
+		{
+			route: '/:collection',
+			method: 'DELETE',
+			exec: resolve( './lib/deleteCollection' )
+		},
+
+
+
+		{
+			route: '/:collection/items',
 			method: 'GET',
 			exec: resolve( './lib/listItems' )
 		},
 		{
-			route: '/db/:collection/:id',
+			route: '/:collection/:id',
 			method: 'GET',
 			exec: resolve( './lib/getItem' )
 		},
@@ -70,34 +98,26 @@ module.exports = {
 
 
 		{
-			route: '/db',
-			method: 'POST',
-			exec: resolve( './lib/createCollection' )
-		},
-		{
-			route: '/db/:collection',
+			route: '/:collection/item',
 			method: 'POST',
 			exec: resolve( './lib/createItem' )
 		},
 		{
-			route: '/db/:collection/:id',
+			route: '/:collection/:_id',
 			method: 'POST',
 			exec: resolve( './lib/createItem' )
 		},
-		
-		
+
+
+
 		{
-			route: '/db',
-			method: 'DELETE',
-			exec: resolve( './lib/deleteCollection' )
+			route: '/:collection/:_id',
+			method: 'PUT',
+			exec: resolve( './lib/updateItem' )
 		},
+
 		{
-			route: '/db/:collection',
-			method: 'DELETE',
-			exec: resolve( './lib/deleteItem' )
-		},
-		{
-			route: '/db/:collection/:id',
+			route: '/:collection/:_id',
 			method: 'DELETE',
 			exec: resolve( './lib/deleteItem' )
 		},
