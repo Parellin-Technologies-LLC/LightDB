@@ -23,11 +23,12 @@ class LightDB
 
 		const Database = require( './src/Database' );
 
-		Database.createCollection( 'database', { description: 'do stuff' } );
+		Database
+			.createCollection( '__main__', { description: 'main process database' } );
 
-		const collection = Database.getCollection( 'database' );
-
-		collection.createItem( 'item', { hello: 'world' } );
+		Database
+			.getCollection( '__main__' )
+			.createItem( '__item__', { description: 'main process item' } );
 	}
 
 	hookRoute( item )

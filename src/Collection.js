@@ -77,6 +77,8 @@ class Collection
 			data = new Item( id, data );
 		}
 
+		data._collection = this.getId();
+
 		return this.getData().set( id, data );
 	}
 

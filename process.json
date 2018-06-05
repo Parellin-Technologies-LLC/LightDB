@@ -4,7 +4,7 @@
 			"name": "lightdb",
 			"script": "index.js",
 			"exec_mode": "cluster",
-			"instances": 0,
+			"instances": 1,
 			"maxMemoryRestart": "8G",
 			"restartDelay": 5000,
 			"node_args": [
