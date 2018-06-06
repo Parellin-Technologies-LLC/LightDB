@@ -271,5 +271,5 @@ class LightDBAPI
 	}
 }
 
-module.export = LightDBAPI;
+module.exports = LightDBAPI;
 
