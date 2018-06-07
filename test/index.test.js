@@ -70,22 +70,6 @@ describe( 'LightDB', () => {
 	} );
 
 	describe( 'LightDB API', () => {
-		it( `/        return "${ config.name }" 200 OK`,
-			done => {
-				chai
-					.request( app )
-					.get( '/' )
-					.end(
-						( e, d ) => {
-							console.log( d );
-							expect( d ).to.have.status( 200 );
-							expect( d.body ).to.eq( config.name );
-							done();
-						}
-					);
-			}
-		);
-
 		it( '/ping    return "pong" 200 OK',
 			done => {
 				chai
@@ -101,6 +85,8 @@ describe( 'LightDB', () => {
 			}
 		);
 	} );
+
+	after( () => process.exit( 0 ) );
 } );
 
 // const

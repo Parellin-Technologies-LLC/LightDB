@@ -93,8 +93,8 @@ function wait( n ) {
 	);
 }
 
-Promise.all( [
-	takeCreateFrame(), wait( 100 ), takeScanFrame(), wait( 100 )
-] )
-	.then( d => d.filter( Boolean ).sort() )
-	.then( d => d.forEach( i => console.log( `${ JSON.stringify( i ) },` ) ) );
+// Promise.all( [
+// 	takeCreateFrame(), wait( 100 ), takeScanFrame(), wait( 100 )
+// ] )
+// 	.then( d => d.filter( Boolean ).sort() )
+// 	.then( d => d.forEach( i => console.log( `${ JSON.stringify( i ) },` ) ) );
