@@ -8,7 +8,9 @@
 		"cleanInstall": "rm -rf node_modules/ package-lock.json && npm i",
 		"dev": "node index.js",
 		"docs": "jsdoc -c jsdocs.js -r",
-		"lint": "eslint .",
+		"lint": "eslint . --ignore-pattern test",
+		"lint-all": "eslint .",
+		"lint-errors": "eslint . --quiet",
 		"preversion": "npm test",
 		"start": "node index.js",
 		"test": "mocha --trace-warnings"
@@ -40,6 +42,7 @@
 		"body-parser": "^1.18.3",
 		"express": "^4.16.3",
 		"http-response-class": "^1.2.2",
+		"superstruct": "^0.5.4",
 		"uuid": "^3.2.1"
 	}
 }

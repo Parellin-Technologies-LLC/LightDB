@@ -7,11 +7,6 @@
 
 class LightMap extends Map
 {
-	constructor( ...args )
-	{
-		super( ...args );
-	}
-
 	reduce( fn, r, iterator = this[ Symbol.iterator ]() )
 	{
 		for( const [ key, value ] of iterator ) {

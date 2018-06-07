@@ -56,9 +56,9 @@ class Collection
 		};
 	}
 
-	hasItem( id )
+	hasItem( _id )
 	{
-		return this.getData().has( id );
+		return this.getData().has( _id );
 	}
 
 	listItems()
@@ -66,31 +66,31 @@ class Collection
 		return this.getData().values();
 	}
 
-	getItem( id )
+	getItem( _id )
 	{
-		return this.getData().get( id );
+		return this.getData().get( _id );
 	}
 
-	createItem( id, data )
+	createItem( _id, data )
 	{
 		if( !( data instanceof Item ) ) {
-			data = new Item( id, data );
+			data = new Item( _id, data );
 		}
 
 		data._collection = this.getId();
 
-		return this.getData().set( id, data );
+		return this.getData().set( _id, data );
 	}
 
-	updateItem( id, data )
+	updateItem( _id, data )
 	{
-		const item = this.getItem( id );
+		const item = this.getItem( _id );
 		return item.updateData( data );
 	}
 
-	deleteItem( id )
+	deleteItem( _id )
 	{
-		return this.getData().delete( id );
+		return this.getData().delete( _id );
 	}
 
 	getCollectionInformation()
@@ -99,8 +99,9 @@ class Collection
 			items          = this.getData(),
 			itemCount      = this.getItemCount(),
 			collectionSize = items.reduce(
-				( r, [ k, v ] ) => {
-					r += JSON.stringify( v ).length;
+				( r, [ k, { data } ] ) => {
+					r += k.length;
+					r += JSON.stringify( data ).length;
 					return r;
 				}, 0
 			);

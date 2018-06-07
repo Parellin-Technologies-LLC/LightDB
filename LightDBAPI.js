@@ -191,7 +191,7 @@ class LightDBAPI
 	/**
 	 * createItem
 	 * @description
-	 * POST 127.0.0.1:23000/:collection/:id
+	 * POST 127.0.0.1:23000/:collection/:_id
 	 * returns item data
 	 * @param {string} collection - collection identifier
 	 * @param {string} _id - item identifier
@@ -210,7 +210,7 @@ class LightDBAPI
 	/**
 	 * getItem
 	 * @description
-	 * GET 127.0.0.1:23000/:collection/:id
+	 * GET 127.0.0.1:23000/:collection/:_id
 	 * returns item data
 	 * @param {string} collection - collection identifier
 	 * @param {string} _id - item identifier (specify nothing to return all items)
@@ -237,7 +237,7 @@ class LightDBAPI
 	/**
 	 * updateItem
 	 * @description
-	 * PUT 127.0.0.1:23000/:collection/:id
+	 * PUT 127.0.0.1:23000/:collection/:_id
 	 * returns updated item data
 	 * @param {string} collection - collection identifier
 	 * @param {string} _id - item identifier
@@ -256,7 +256,7 @@ class LightDBAPI
 	/**
 	 * deleteItem
 	 * @description
-	 * DELETE 127.0.0.1:23000/:collection/:id
+	 * DELETE 127.0.0.1:23000/:collection/:_id
 	 * returns nothing
 	 * @param {string} collection - collection identifier
 	 * @param {string} _id - item identifier

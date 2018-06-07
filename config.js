@@ -42,15 +42,16 @@ module.exports = {
 			method: 'ALL',
 			exec: resolve( './lib/docs' )
 		},
-
-
-
+		{
+			route: '/task',
+			method: 'POST',
+			exec: resolve( './lib/task' )
+		},
 		{
 			route: '/json',
 			method: 'GET',
 			exec: resolve( './lib/toJSON' )
 		},
-
 		{
 			route: '/',
 			method: 'GET',
@@ -81,22 +82,16 @@ module.exports = {
 			method: 'DELETE',
 			exec: resolve( './lib/deleteCollection' )
 		},
-
-
-
 		{
 			route: '/:collection/items',
 			method: 'GET',
 			exec: resolve( './lib/listItems' )
 		},
 		{
-			route: '/:collection/:id',
+			route: '/:collection/:_id',
 			method: 'GET',
 			exec: resolve( './lib/getItem' )
 		},
-
-
-
 		{
 			route: '/:collection/item',
 			method: 'POST',
@@ -107,23 +102,16 @@ module.exports = {
 			method: 'POST',
 			exec: resolve( './lib/createItem' )
 		},
-
-
-
 		{
 			route: '/:collection/:_id',
 			method: 'PUT',
 			exec: resolve( './lib/updateItem' )
 		},
-
 		{
 			route: '/:collection/:_id',
 			method: 'DELETE',
 			exec: resolve( './lib/deleteItem' )
 		},
-
-
-
 		{
 			route: '*',
 			method: 'ALL',

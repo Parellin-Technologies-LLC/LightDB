@@ -6,9 +6,8 @@
 'use strict';
 
 const
-	Collection      = require( './Collection' ),
-	LightMap        = require( './LightMap' ),
-	{ bytesToSize } = require( './utils' );
+	Collection = require( './Collection' ),
+	LightMap   = require( './LightMap' );
 
 class Database
 {
