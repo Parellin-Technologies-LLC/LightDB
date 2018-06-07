@@ -1,6 +1,6 @@
 {
 	"name": "lightdb",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"description": "A tiny database for in-memory transactions",
 	"main": "index.js",
 	"scripts": {
