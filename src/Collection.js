@@ -61,6 +61,11 @@ class Collection
 		return this.getData().has( _id );
 	}
 
+	listKeys()
+	{
+		return this.getData().keys();
+	}
+
 	listItems()
 	{
 		return this.getData().values();

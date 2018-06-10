@@ -89,6 +89,9 @@ describe( 'LightDB', () => {
 	after( () => process.exit( 0 ) );
 } );
 
+// Test raw query speeds with:
+// curl -s -w '\n\nTotal: %{time_total}\n' http://127.0.0.1:23000/__main__/__item__
+
 // const
 // 	cId = '__main__',
 // 	iId = '__item__',
