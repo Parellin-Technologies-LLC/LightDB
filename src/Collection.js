@@ -6,7 +6,7 @@
 'use strict';
 
 const
-	LightMap        = require( './LightMap' ),
+	LightMap        = require( '@parellin/lightmap' ),
 	Item            = require( './Item' ),
 	UUIDv4          = require( 'uuid/v4' ),
 	{ bytesToSize } = require( './utils' );

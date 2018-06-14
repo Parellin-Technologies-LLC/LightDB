@@ -39,6 +39,7 @@
 		"request": "^2.87.0"
 	},
 	"dependencies": {
+		"@parellin/lightmap": "0.0.7",
 		"body-parser": "^1.18.3",
 		"express": "^4.16.3",
 		"http-response-class": "^1.2.2",

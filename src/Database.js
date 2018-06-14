@@ -7,7 +7,7 @@
 
 const
 	Collection = require( './Collection' ),
-	LightMap   = require( './LightMap' );
+	LightMap   = require( '@parellin/lightmap' );
 
 class Database
 {

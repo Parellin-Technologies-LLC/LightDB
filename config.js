@@ -43,6 +43,11 @@ module.exports = {
 			exec: resolve( './lib/docs' )
 		},
 		{
+			route: '/ui',
+			method: 'GET',
+			exec: resolve( './lib/ui' )
+		},
+		{
 			route: '/task',
 			method: 'POST',
 			exec: resolve( './lib/task' )
