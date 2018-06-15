@@ -51,7 +51,7 @@ module.exports.updateCollection = ( collection, data, parameters = {} ) => {
 	if( collection ) {
 		if( Database.hasCollection( collection ) ) {
 			Database.getCollection( collection ).updateMetadata( data );
-
+			
 			return new Response( 200, Database.getCollection( collection ).getCollectionInformation() );
 		} else {
 			return new Response( 404, `Collection "${ collection }" not found` );
@@ -77,7 +77,7 @@ module.exports.listItems = ( collection, data, parameters = {} ) => {
 	if( collection ) {
 		if( Database.hasCollection( collection ) ) {
 			const db = Database.getCollection( collection );
-
+			
 			if( parameters.keysOnly ) {
 				return new Response( 200, [ ...db.listKeys() ] );
 			} else {
@@ -93,11 +93,11 @@ module.exports.listItems = ( collection, data, parameters = {} ) => {
 
 module.exports.hasItem = ( collection, data, parameters = {} ) => {
 	const _id = data._id || data;
-
+	
 	if( collection && _id ) {
 		if( Database.hasCollection( collection ) ) {
 			const db = Database.getCollection( collection );
-
+			
 			return new Response( 200, db.hasItem( _id ) );
 		} else {
 			return new Response( 404, `Collection "${ collection }" not found` );
@@ -109,11 +109,11 @@ module.exports.hasItem = ( collection, data, parameters = {} ) => {
 
 module.exports.getItem = ( collection, data, parameters = {} ) => {
 	const _id = data._id || data;
-
+	
 	if( collection && _id ) {
 		if( Database.hasCollection( collection ) ) {
 			const db = Database.getCollection( collection );
-
+			
 			if( db.hasItem( _id ) ) {
 				return new Response( 200, db.getItem( _id ) );
 			} else {
@@ -127,12 +127,12 @@ module.exports.getItem = ( collection, data, parameters = {} ) => {
 	}
 };
 
-module.exports.createItem = ( collection, { _id, ...data }, parameters = {} ) => {
+module.exports.createItem = ( collection, { _id, data }, parameters = {} ) => {
 	if( collection && data ) {
 		if( Database.hasCollection( collection ) ) {
 			const db = Database.getCollection( collection );
-
-			if( db.hasItem( _id ) ) {
+			
+			if( db.hasItem( _id ) && !parameters.forceOverwrite ) {
 				if( parameters.skipIfExists ) {
 					return new Response( 200, db.getItem( _id ) );
 				} else {
@@ -140,9 +140,9 @@ module.exports.createItem = ( collection, { _id, ...data }, parameters = {} ) =>
 				}
 			} else {
 				const item = new Item( _id, data );
-
+				
 				db.createItem( item.getId(), item );
-
+				
 				return new Response( 201, item );
 			}
 		} else {
@@ -153,11 +153,11 @@ module.exports.createItem = ( collection, { _id, ...data }, parameters = {} ) =>
 	}
 };
 
-module.exports.updateItem = ( collection, { _id, ...data }, parameters = {} ) => {
+module.exports.updateItem = ( collection, { _id, data }, parameters = {} ) => {
 	if( collection && data ) {
 		if( Database.hasCollection( collection ) ) {
 			const db = Database.getCollection( collection );
-
+			
 			if( db.hasItem( _id ) ) {
 				return new Response( 202, db.updateItem( _id, data ) );
 			} else {
@@ -173,7 +173,7 @@ module.exports.updateItem = ( collection, { _id, ...data }, parameters = {} ) =>
 
 module.exports.deleteItem = ( collection, data, parameters = {} ) => {
 	const _id = data._id || data;
-
+	
 	if( collection ) {
 		if( Database.hasCollection( collection ) ) {
 			if( Database.getCollection( collection ).deleteItem( _id ) ) {
@@ -188,4 +188,3 @@ module.exports.deleteItem = ( collection, data, parameters = {} ) => {
 		return new Response( 400, 'Argument Error - must specify collection name and item id' );
 	}
 };
-

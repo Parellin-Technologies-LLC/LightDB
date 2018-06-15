@@ -23,19 +23,14 @@ module.exports = {
 	speedStandard: 0.08,
 	api: [
 		{
-			route: '/ping',
-			method: 'ALL',
-			exec: resolve( './lib/ping' )
+			route: '/',
+			method: 'GET',
+			exec: resolve( './lib/index' )
 		},
 		{
-			route: '/version',
-			method: 'ALL',
-			exec: resolve( './lib/version' )
-		},
-		{
-			route: '/kill',
-			method: 'ALL',
-			exec: resolve( './lib/kill' )
+			route: '/',
+			method: 'POST',
+			exec: resolve( './lib/task' )
 		},
 		{
 			route: '/docs',
@@ -43,79 +38,24 @@ module.exports = {
 			exec: resolve( './lib/docs' )
 		},
 		{
+			route: '/kill',
+			method: 'ALL',
+			exec: resolve( './lib/kill' )
+		},
+		{
+			route: '/ping',
+			method: 'ALL',
+			exec: resolve( './lib/ping' )
+		},
+		{
 			route: '/ui',
 			method: 'GET',
 			exec: resolve( './lib/ui' )
 		},
 		{
-			route: '/task',
-			method: 'POST',
-			exec: resolve( './lib/task' )
-		},
-		{
-			route: '/json',
-			method: 'GET',
-			exec: resolve( './lib/toJSON' )
-		},
-		{
-			route: '/',
-			method: 'GET',
-			exec: resolve( './lib/index' )
-		},
-		{
-			route: '/collections',
-			method: 'GET',
-			exec: resolve( './lib/listCollections' )
-		},
-		{
-			route: '/:collection',
-			method: 'GET',
-			exec: resolve( './lib/getCollection' )
-		},
-		{
-			route: '/:collection',
-			method: 'POST',
-			exec: resolve( './lib/createCollection' )
-		},
-		{
-			route: '/:collection',
-			method: 'PUT',
-			exec: resolve( './lib/updateCollection' )
-		},
-		{
-			route: '/:collection',
-			method: 'DELETE',
-			exec: resolve( './lib/deleteCollection' )
-		},
-		{
-			route: '/:collection/items',
-			method: 'GET',
-			exec: resolve( './lib/listItems' )
-		},
-		{
-			route: '/:collection/:_id',
-			method: 'GET',
-			exec: resolve( './lib/getItem' )
-		},
-		{
-			route: '/:collection/item',
-			method: 'POST',
-			exec: resolve( './lib/createItem' )
-		},
-		{
-			route: '/:collection/:_id',
-			method: 'POST',
-			exec: resolve( './lib/createItem' )
-		},
-		{
-			route: '/:collection/:_id',
-			method: 'PUT',
-			exec: resolve( './lib/updateItem' )
-		},
-		{
-			route: '/:collection/:_id',
-			method: 'DELETE',
-			exec: resolve( './lib/deleteItem' )
+			route: '/version',
+			method: 'ALL',
+			exec: resolve( './lib/version' )
 		},
 		{
 			route: '*',

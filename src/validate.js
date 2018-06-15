@@ -21,17 +21,15 @@ module.exports = {
 		parameters: 'object?',
 		data: 'any?'
 	},
-	validate: ( expected, data ) => {
-		return new Promise(
-			( res, rej ) => {
-				const validataion = struct( expected ).validate( data );
-
-				if( validataion[ 0 ] ) {
-					rej( new Response( 417, { error: validataion[ 0 ].message, expected } ) );
-				} else {
-					res( validataion[ 1 ] );
-				}
+	validate: ( expected, data ) => new Promise(
+		( res, rej ) => {
+			const validataion = struct( expected ).validate( data );
+			
+			if( validataion[ 0 ] ) {
+				rej( new Response( 417, { error: validataion[ 0 ].message, expected } ) );
+			} else {
+				res( validataion[ 1 ] );
 			}
-		);
-	}
+		}
+	)
 };

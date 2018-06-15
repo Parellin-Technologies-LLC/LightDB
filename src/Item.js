@@ -5,7 +5,9 @@
  *******************************************************************************************************/
 'use strict';
 
-const UUIDv4 = require( 'uuid/v4' );
+const
+	UUIDv4       = require( 'uuid/v4' ),
+	{ isObject } = require( './utils' );
 
 class Item
 {
@@ -16,24 +18,24 @@ class Item
 		this.data     = data;
 		this.modified = this.created;
 	}
-
+	
 	getId()
 	{
 		return this._id;
 	}
-
+	
 	getData()
 	{
 		return this.data;
 	}
-
+	
 	updateData( d )
 	{
 		this.modified = new Date().toString();
 		this.data     = d;
 		return this;
 	}
-
+	
 	toJSON()
 	{
 		return {
@@ -42,6 +44,20 @@ class Item
 			data: this.data,
 			modified: this.modified
 		};
+	}
+	
+	toString()
+	{
+		return JSON.stringify( this.toJSON() );
+	}
+	
+	static [ Symbol.hasInstance ]( obj )
+	{
+		return ( obj && isObject( obj ) ) &&
+			(
+				obj.hasOwnProperty( '_id' ) &&
+				obj.hasOwnProperty( 'data' )
+			);
 	}
 }
 
