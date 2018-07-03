@@ -8,17 +8,20 @@
 const
 	Response = require( 'http-response-class' ),
 	Database = require( '../src/Database' ),
-	Item     = require( '../src/Item' );
+	Item     = require( '../src/Item' ),
+	{
+		isArray
+	}        = require( './utils' );
 
-module.exports.getDatabaseInformation = () => {
+function getDatabaseInformation() {
 	return new Response( 200, Database.getDatabaseInformation() );
-};
+}
 
-module.exports.listCollections = () => {
+function listCollections() {
 	return new Response( 200, [ ...Database.listCollections() ] );
-};
+}
 
-module.exports.getCollection = ( collection, data, parameters = {} ) => {
+function getCollection( collection, data, parameters = {} ) {
 	if( collection ) {
 		if( Database.hasCollection( collection ) ) {
 			return new Response( 200, Database.getCollection( collection ).getCollectionInformation() );
@@ -28,9 +31,9 @@ module.exports.getCollection = ( collection, data, parameters = {} ) => {
 	} else {
 		return new Response( 400, 'Argument Error - must specify collection name' );
 	}
-};
+}
 
-module.exports.createCollection = ( collection, data, parameters = {} ) => {
+function createCollection( collection, data, parameters = {} ) {
 	if( collection ) {
 		if( Database.hasCollection( collection ) ) {
 			if( parameters.skipIfExists ) {
@@ -45,13 +48,13 @@ module.exports.createCollection = ( collection, data, parameters = {} ) => {
 	} else {
 		return new Response( 400, 'Argument Error - must specify collection name' );
 	}
-};
+}
 
-module.exports.updateCollection = ( collection, data, parameters = {} ) => {
+function updateCollection( collection, data, parameters = {} ) {
 	if( collection ) {
 		if( Database.hasCollection( collection ) ) {
 			Database.getCollection( collection ).updateMetadata( data );
-			
+
 			return new Response( 200, Database.getCollection( collection ).getCollectionInformation() );
 		} else {
 			return new Response( 404, `Collection "${ collection }" not found` );
@@ -59,9 +62,9 @@ module.exports.updateCollection = ( collection, data, parameters = {} ) => {
 	} else {
 		return new Response( 400, 'Argument Error - must specify collection name' );
 	}
-};
+}
 
-module.exports.deleteCollection = ( collection, data, parameters = {} ) => {
+function deleteCollection( collection, data, parameters = {} ) {
 	if( collection ) {
 		if( Database.deleteCollection( collection ) ) {
 			return new Response( 202, {} );
@@ -71,13 +74,13 @@ module.exports.deleteCollection = ( collection, data, parameters = {} ) => {
 	} else {
 		return new Response( 400, 'Argument Error - must specify collection name' );
 	}
-};
+}
 
-module.exports.listItems = ( collection, data, parameters = {} ) => {
+function listItems( collection, data, parameters = {} ) {
 	if( collection ) {
 		if( Database.hasCollection( collection ) ) {
 			const db = Database.getCollection( collection );
-			
+
 			if( parameters.keysOnly ) {
 				return new Response( 200, [ ...db.listKeys() ] );
 			} else {
@@ -89,15 +92,15 @@ module.exports.listItems = ( collection, data, parameters = {} ) => {
 	} else {
 		return new Response( 400, 'Argument Error - must specify collection name' );
 	}
-};
+}
 
-module.exports.hasItem = ( collection, data, parameters = {} ) => {
+function hasItem( collection, data, parameters = {} ) {
 	const _id = data._id || data;
-	
+
 	if( collection && _id ) {
 		if( Database.hasCollection( collection ) ) {
 			const db = Database.getCollection( collection );
-			
+
 			return new Response( 200, db.hasItem( _id ) );
 		} else {
 			return new Response( 404, `Collection "${ collection }" not found` );
@@ -105,15 +108,15 @@ module.exports.hasItem = ( collection, data, parameters = {} ) => {
 	} else {
 		return new Response( 400, 'Argument Error - must specify collection name and item id' );
 	}
-};
+}
 
-module.exports.getItem = ( collection, data, parameters = {} ) => {
+function getItem( collection, data, parameters = {} ) {
 	const _id = data._id || data;
-	
+
 	if( collection && _id ) {
 		if( Database.hasCollection( collection ) ) {
 			const db = Database.getCollection( collection );
-			
+
 			if( db.hasItem( _id ) ) {
 				return new Response( 200, db.getItem( _id ) );
 			} else {
@@ -125,13 +128,13 @@ module.exports.getItem = ( collection, data, parameters = {} ) => {
 	} else {
 		return new Response( 400, 'Argument Error - must specify collection name and item id' );
 	}
-};
+}
 
-module.exports.createItem = ( collection, { _id, data }, parameters = {} ) => {
+function createItem( collection, { _id, tags = [], ...data }, parameters = {} ) {
 	if( collection && data ) {
 		if( Database.hasCollection( collection ) ) {
 			const db = Database.getCollection( collection );
-			
+
 			if( db.hasItem( _id ) && !parameters.forceOverwrite ) {
 				if( parameters.skipIfExists ) {
 					return new Response( 200, db.getItem( _id ) );
@@ -139,10 +142,12 @@ module.exports.createItem = ( collection, { _id, data }, parameters = {} ) => {
 					return new Response( 409, `Item "${ _id }" already exists` );
 				}
 			} else {
-				const item = new Item( _id, data );
-				
-				db.createItem( item.getId(), item );
-				
+				const item = new Item( _id, data, tags );
+
+				if( !parameters.dryRun ) {
+					db.createItem( item.getId(), item );
+				}
+
 				return new Response( 201, item );
 			}
 		} else {
@@ -151,13 +156,13 @@ module.exports.createItem = ( collection, { _id, data }, parameters = {} ) => {
 	} else {
 		return new Response( 400, 'Argument Error - must specify collection name and item data' );
 	}
-};
+}
 
-module.exports.updateItem = ( collection, { _id, data }, parameters = {} ) => {
+function updateItem( collection, { _id, data }, parameters = {} ) {
 	if( collection && data ) {
 		if( Database.hasCollection( collection ) ) {
 			const db = Database.getCollection( collection );
-			
+
 			if( db.hasItem( _id ) ) {
 				return new Response( 202, db.updateItem( _id, data ) );
 			} else {
@@ -169,11 +174,11 @@ module.exports.updateItem = ( collection, { _id, data }, parameters = {} ) => {
 	} else {
 		return new Response( 400, 'Argument Error - must specify collection name and item data' );
 	}
-};
+}
 
-module.exports.deleteItem = ( collection, data, parameters = {} ) => {
+function deleteItem( collection, data, parameters = {} ) {
 	const _id = data._id || data;
-	
+
 	if( collection ) {
 		if( Database.hasCollection( collection ) ) {
 			if( Database.getCollection( collection ).deleteItem( _id ) ) {
@@ -187,4 +192,59 @@ module.exports.deleteItem = ( collection, data, parameters = {} ) => {
 	} else {
 		return new Response( 400, 'Argument Error - must specify collection name and item id' );
 	}
-};
+}
+
+function bulkCreate( collection, data, parameters = {} ) {
+	if( collection ) {
+		if( Database.hasCollection( collection ) ) {
+			if( isArray( data ) ) {
+				const run = ( dryRun = false ) => {
+					parameters.dryRun = dryRun;
+
+					return data
+						.map( d => createItem( collection, d, parameters ) )
+						.filter( d => dryRun ? !d.isSuccess() : d.isSuccess() );
+				};
+
+				const test = run( true );
+
+				if( test.length ) {
+					return new Response( 400, test );
+				}
+
+				data = run( false ).map( ( { data } ) => data );
+
+				return new Response( 201, data );
+			} else {
+				return new Response( 417, 'Data must be an array' );
+			}
+		} else {
+			return new Response( 404, `Collection "${ collection }" not found` );
+		}
+	} else {
+		return new Response( 400, 'Argument Error - must specify collection name and item id' );
+	}
+}
+
+module.exports.getDatabaseInformation = getDatabaseInformation;
+module.exports.listCollections        = listCollections;
+module.exports.getCollection          = getCollection;
+module.exports.createCollection       = createCollection;
+module.exports.updateCollection       = updateCollection;
+
+module.exports.deleteCollection = deleteCollection;
+module.exports.listItems        = listItems;
+module.exports.hasItem          = hasItem;
+module.exports.getItem          = getItem;
+module.exports.createItem       = createItem;
+module.exports.updateItem       = updateItem;
+module.exports.deleteItem       = deleteItem;
+
+module.exports.bulkCreate = bulkCreate;
+
+module.exports.list   = listItems;
+module.exports.query  = listItems;
+module.exports.has    = hasItem;
+module.exports.get    = getItem;
+module.exports.put    = createItem;
+module.exports.delete = deleteItem;

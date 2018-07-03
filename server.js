@@ -53,9 +53,11 @@ class LightDB
 		this.express.use( bodyParser.json() );
 		this.express.use( bodyParser.text() );
 		this.express.use( require( './src/inspection' )() );
-
+		
 		process.config.api = process.config.api
 			.map( item => this.hookRoute( item ) );
+
+		this.express.use( require( './src/captureErrors' )() );
 	}
 
 	initialize()

@@ -44,6 +44,6 @@
 		"express": "^4.16.3",
 		"http-response-class": "^1.2.2",
 		"superstruct": "^0.5.4",
-		"uuid": "^3.2.1"
+		"uuid": "^3.3.2"
 	}
 }
