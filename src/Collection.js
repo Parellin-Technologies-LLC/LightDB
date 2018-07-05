@@ -84,6 +84,10 @@ class Collection
 
 		data._collection = this.getId();
 
+		if( data.ttl ) {
+			data.ttl = setTimeout( () => this.deleteItem( _id ), data.ttl );
+		}
+		
 		return this.getData().set( _id, data );
 	}
 

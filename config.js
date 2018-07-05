@@ -48,6 +48,11 @@ module.exports = {
 			exec: resolve( './lib/ping' )
 		},
 		{
+			route: '/json',
+			method: 'GET',
+			exec: resolve( './lib/json' )
+		},
+		{
 			route: '/ui',
 			method: 'GET',
 			exec: resolve( './lib/ui' )

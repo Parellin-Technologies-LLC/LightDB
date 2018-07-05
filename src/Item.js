@@ -14,13 +14,17 @@ const
 
 class Item
 {
-	constructor( _id, data, tags = [] )
+	constructor( _id, data, tags = [], ttl )
 	{
 		this._id      = _id || UUIDv4();
 		this.created  = new Date().toString();
 		this.data     = data;
 		this.modified = this.created;
 		this.tags     = [ ...( data.tags || tags ) ];
+
+		if( ttl ) {
+			this.ttl = ttl;
+		}
 	}
 
 	getId()

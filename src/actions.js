@@ -10,7 +10,10 @@ const
 	Database = require( '../src/Database' ),
 	Item     = require( '../src/Item' ),
 	{
-		isArray
+		isBoolean,
+		isString,
+		isArray,
+		isObject
 	}        = require( './utils' );
 
 function getDatabaseInformation() {
@@ -82,9 +85,42 @@ function listItems( collection, data, parameters = {} ) {
 			const db = Database.getCollection( collection );
 
 			if( parameters.keysOnly ) {
-				return new Response( 200, [ ...db.listKeys() ] );
+				let keys = [ ...db.listKeys() ];
+
+				if( parameters.sort && !isBoolean( parameters.sort ) && !isString( parameters.sort ) ) {
+					return new Response( 417, 'parameters.sort must be a boolean or string specifying a sort pattern' );
+				}
+
+				if( parameters.sort === true ) {
+					keys = keys.sort();
+				} else if( parameters.sort === '' + parameters.sort ) {
+					parameters.sort = parameters.sort.startsWith( 'return' ) ?
+						parameters.sort :
+						`return ${ parameters.sort }`;
+
+					keys = keys.sort(
+						( a, b ) => ( () => {} ).constructor( 'a', 'b', parameters.sort )( a, b )
+					);
+				}
+
+				return new Response( 200, keys );
 			} else {
-				return new Response( 200, [ ...db.listItems() ] );
+				let items = [ ...db.listItems() ];
+
+				if( parameters.tags && !isArray( parameters.tags ) && !isString( ...parameters.tags ) ) {
+					return new Response( 417, 'parameters.tags must be an array of strings' );
+				}
+
+				if( parameters.tags ) {
+					items = items.filter(
+						item => item.tags &&
+							item.tags.filter(
+								tag => parameters.tags.includes( tag )
+							).length
+					);
+				}
+
+				return new Response( 200, items );
 			}
 		} else {
 			return new Response( 404, `Collection "${ collection }" not found` );
@@ -142,7 +178,7 @@ function createItem( collection, { _id, tags = [], ...data }, parameters = {} ) 
 					return new Response( 409, `Item "${ _id }" already exists` );
 				}
 			} else {
-				const item = new Item( _id, data, tags );
+				const item = new Item( _id, data, tags, parameters.ttl );
 
 				if( !parameters.dryRun ) {
 					db.createItem( item.getId(), item );
@@ -164,7 +200,15 @@ function updateItem( collection, { _id, data }, parameters = {} ) {
 			const db = Database.getCollection( collection );
 
 			if( db.hasItem( _id ) ) {
-				return new Response( 202, db.updateItem( _id, data ) );
+				if( parameters.dryRun ) {
+					const item = db.getItem( _id );
+
+					item.modified = new Date().toString();
+
+					return new Response( 202, item );
+				} else {
+					return new Response( 202, db.updateItem( _id, data ) );
+				}
 			} else {
 				return new Response( 404, `Item "${ _id }" not found` );
 			}
@@ -181,7 +225,11 @@ function deleteItem( collection, data, parameters = {} ) {
 
 	if( collection ) {
 		if( Database.hasCollection( collection ) ) {
-			if( Database.getCollection( collection ).deleteItem( _id ) ) {
+			if( Database.getCollection( collection ).hasItem( _id ) ) {
+				if( !parameters.dryRun ) {
+					Database.getCollection( collection ).deleteItem( _id );
+				}
+
 				return new Response( 202, {} );
 			} else {
 				return new Response( 404, `Item "${ _id }" not found` );
@@ -194,7 +242,7 @@ function deleteItem( collection, data, parameters = {} ) {
 	}
 }
 
-function bulkCreate( collection, data, parameters = {} ) {
+function batchCreate( collection, data, parameters = {} ) {
 	if( collection ) {
 		if( Database.hasCollection( collection ) ) {
 			if( isArray( data ) ) {
@@ -240,7 +288,8 @@ module.exports.createItem       = createItem;
 module.exports.updateItem       = updateItem;
 module.exports.deleteItem       = deleteItem;
 
-module.exports.bulkCreate = bulkCreate;
+module.exports.batchCreate = batchCreate;
+module.exports.batchPut    = batchCreate;
 
 module.exports.list   = listItems;
 module.exports.query  = listItems;
