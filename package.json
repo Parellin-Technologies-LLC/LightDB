@@ -39,10 +39,12 @@
 		"request": "^2.87.0"
 	},
 	"dependencies": {
-		"@parellin/lightmap": "file:../lightmap",
+		"@parellin/lightmap": "latest",
 		"body-parser": "^1.18.3",
 		"express": "^4.16.3",
+		"gonfig": "file:../gonfig",
 		"http-response-class": "^1.2.2",
+		"on-finished": "^2.3.0",
 		"superstruct": "^0.5.4",
 		"uuid": "^3.3.2"
 	}

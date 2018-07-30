@@ -118,7 +118,7 @@ module.exports = {
 		'no-ex-assign': 1,
 		'no-extend-native': 1,
 		'no-extra-bind': 1,
-		'no-extra-boolean-cast': 1,
+		'no-extra-boolean-cast': 'off',
 		'no-extra-parens': [ 1, 'functions' ],
 		'no-fallthrough': 1,
 		'no-floating-decimal': 1,
@@ -224,7 +224,11 @@ module.exports = {
 			}
 		],
 		'space-before-blocks': [ 1, 'always' ],
-		'space-before-function-paren': [ 1, 'never' ],
+		'space-before-function-paren': [ 1, {
+			anonymous: 'never',
+			named: 'never',
+			asyncArrow: 'always'
+		} ],
 		'space-in-parens': [ 1, 'always' ],
 		'space-infix-ops': 1,
 		'space-unary-ops': [
