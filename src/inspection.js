@@ -20,7 +20,7 @@ function endPacketTime( req ) {
 	const
 		hrtime = process.hrtime( req.startTime ),
 		t      = ( hrtime[ 0 ] * 1e9 ) + hrtime[ 1 ];
-	
+
 	req.endTime = t < 1000 ? `${ t.toFixed( 2 ) } ns` :
 		t < 1000000 ? `${ ( t / 1e3 ).toFixed( 2 ) } μs` :
 			t < 1000000000 ? `${ ( t / 1e6 ).toFixed( 2 ) } ms` :
@@ -37,12 +37,12 @@ function setupResponse( req, res ) {
 		if( !res ) {
 			return;
 		}
-		
+
 		endPacketTime( req );
-		
+
 		if( d instanceof Response ) {
-			const data = JSON.stringify( d.data );
-			
+			const data = JSON.stringify( d.data || '' );
+
 			res
 				.set( {
 					'Access-Control-Allow-Origin': '*',
@@ -56,11 +56,11 @@ function setupResponse( req, res ) {
 		} else {
 			res.respond( new Response( 400, d ) );
 		}
-		
+
 		clearTimeout( res.timer );
 		res = null;
 	};
-	
+
 	res.timer = setTimeout(
 		() => !res || res.respond( new Response( 408 ) ),
 		config.timeout
@@ -71,14 +71,14 @@ function inspection( req, res, next ) {
 	startPacketTime( req );
 	decodeHeaders( req.headers );
 	setupResponse( req, res );
-	
+
 	if( gonfig.log === gonfig.LEVEL.VERBOSE ) {
 		onFinished( res, ( e, d ) => {
 			if( res ) {
 				clearTimeout( res.timer );
 				res = null;
 			}
-			
+
 			console.log( {
 				timestamp: new Date().toISOString(),
 				request: `HTTP/${ req.httpVersion } ${ req.method } ${ req.path }`,
@@ -89,7 +89,7 @@ function inspection( req, res, next ) {
 			} );
 		} );
 	}
-	
+
 	if( `${ req.protocol }://${ req.hostname }${ req.path }`.length >= config.maximumURISize ) {
 		return res.respond( new Response( 414, 'URI exceeds maximum length' ) );
 	} else if( req.rawHeaders.join( '' ).length >= config.maximumHeaderSize ) {
@@ -99,7 +99,7 @@ function inspection( req, res, next ) {
 	} else if( +req.httpVersion < config.minimumHTTPVersion ) {
 		return res.respond( new Response( 505 ) );
 	}
-	
+
 	next();
 }
 
