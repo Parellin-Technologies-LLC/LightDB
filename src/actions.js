@@ -12,8 +12,7 @@ const
 	{
 		isBoolean,
 		isString,
-		isArray,
-		isObject
+		isArray
 	}        = require( './utils' );
 
 function getDatabaseInformation() {
@@ -279,14 +278,14 @@ module.exports.listCollections        = listCollections;
 module.exports.getCollection          = getCollection;
 module.exports.createCollection       = createCollection;
 module.exports.updateCollection       = updateCollection;
+module.exports.deleteCollection       = deleteCollection;
 
-module.exports.deleteCollection = deleteCollection;
-module.exports.listItems        = listItems;
-module.exports.hasItem          = hasItem;
-module.exports.getItem          = getItem;
-module.exports.createItem       = createItem;
-module.exports.updateItem       = updateItem;
-module.exports.deleteItem       = deleteItem;
+module.exports.listItems  = listItems;
+module.exports.hasItem    = hasItem;
+module.exports.getItem    = getItem;
+module.exports.createItem = createItem;
+module.exports.updateItem = updateItem;
+module.exports.deleteItem = deleteItem;
 
 module.exports.batchCreate = batchCreate;
 module.exports.batchPut    = batchCreate;

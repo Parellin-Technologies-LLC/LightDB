@@ -13,20 +13,13 @@ const
 	{ resolve } = require( 'path' ),
 	debug       = require( './debug' );
 
-const Database = require( './src/Database' );
-
 let isClosed = false;
 
 class LightDB
 {
 	constructor()
 	{
-		Database
-			.createCollection( '__main__', { description: 'main process database' } );
-		
-		Database
-			.getCollection( '__main__' )
-			.createItem( '__item__', { description: 'main process item' } );
+
 	}
 	
 	hookRoute( item )
@@ -42,7 +35,7 @@ class LightDB
 		
 		return item;
 	}
-	
+
 	expressInitialize()
 	{
 		this.express = express();
@@ -60,7 +53,7 @@ class LightDB
 	initialize()
 	{
 		this.expressInitialize();
-		
+
 		process
 			.on( 'uncaughtException', err => debug( gonfig.getErrorReport( err ) ) )
 			.on( 'unhandledRejection', err => debug( gonfig.getErrorReport( err ) ) )
@@ -72,7 +65,7 @@ class LightDB
 				debug( `Received exit with code ${ code }, graceful shutdown...` );
 				this.shutdown( code );
 			} );
-		
+
 		return this;
 	}
 	

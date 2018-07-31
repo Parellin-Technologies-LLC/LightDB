@@ -13,12 +13,12 @@ gonfig
 	.setLogLevel( gonfig.LEVEL.VERBOSE )
 	.setEnvironment( gonfig.ENV.DEBUG )
 	.load( 'server', 'config/server.json' )
-	.load( 'api', 'config.js' )
+	.load( 'api', 'config/api.js' )
 	.refresh();
 
 ( async () => {
 	if( gonfig.get( 'pm_id' ) ) {
-		await require( './init' )();
+		// await require( './init' )();
 	}
 	
 	await require( './init' )();
