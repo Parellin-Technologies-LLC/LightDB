@@ -12,92 +12,110 @@ const
 	onFinished = require( 'on-finished' ),
 	Response   = require( 'http-response-class' );
 
-function startPacketTime( req ) {
-	req.startTime = process.hrtime();
-}
+function inspection( req, res, next ) {
+	const id = UUIDv4();
 
-function endPacketTime( req ) {
-	const
-		hrtime = process.hrtime( req.startTime ),
-		t      = ( hrtime[ 0 ] * 1e9 ) + hrtime[ 1 ];
+	const packet = {
+		id,
+		path: req.path,
+		method: req.method,
+		params: req.params,
+		query: req.query,
+		cookies: req.cookies,
+		data: req.body || req.data,
+		headers: {
+			'Access-Control-Expose-Headers': '*',
+			'Access-Control-Allow-Origin': '*',
+			'Access-Control-Max-Age': 1728000,
+			'Content-Type': 'application/json; charset=utf-8',
+			RequestID: id
+		},
+		ContentLength: req.headers[ 'content-length' ],
+		IP: req.ip
+	};
 
-	req.endTime = t < 1000 ? `${ t.toFixed( 2 ) } ns` :
-		t < 1000000 ? `${ ( t / 1e3 ).toFixed( 2 ) } μs` :
-			t < 1000000000 ? `${ ( t / 1e6 ).toFixed( 2 ) } ms` :
-				`${ ( t / 1e9 ).toFixed( 2 ) } s`;
-}
+	packet.internalTime = 0;
+	packet.startTimer   = process.hrtime();
+	packet.endTimer     = () => {
+		const
+			hrtime = process.hrtime( packet.startTimer ),
+			t      = ( hrtime[ 0 ] * 1e9 ) + hrtime[ 1 ];
 
-function decodeHeaders( headers ) {
-	Object.keys( headers )
-		.forEach( hdr => headers[ hdr ] = decodeURI( headers[ hdr ] ) );
-}
+		packet.internalTime = t < 1000 ? `${ t.toFixed( 2 ) } ns` :
+			t < 1000000 ? `${ ( t / 1e3 ).toFixed( 2 ) } μs` :
+				t < 1000000000 ? `${ ( t / 1e6 ).toFixed( 2 ) } ms` :
+					`${ ( t / 1e9 ).toFixed( 2 ) } s`;
+	};
 
-function setupResponse( req, res ) {
-	res.respond = d => {
-		if( !res ) {
+	packet.timer = setTimeout(
+		() => ( !res || !packet ) || packet.respond( new Response( 408 ) ),
+		config.timeout
+	);
+
+	packet.respond = d => {
+		if( !res || !packet ) {
 			return;
 		}
 
-		endPacketTime( req );
+		packet.endTimer();
 
 		if( d instanceof Response ) {
-			const data = JSON.stringify( d.data || '' );
+			let data = d.data || '';
+
+			if( /application\/json/.test( packet.headers[ 'Content-Type' ] ) ) {
+				data = JSON.stringify( data );
+			}
 
 			res
-				.set( {
-					'Access-Control-Allow-Origin': '*',
-					'Access-Control-Max-Age': 1728000,
-					'Content-Type': 'application/json; charset=utf-8',
-					'Content-Length': data.length,
-					RequestID: UUIDv4()
-				} )
+				.set( packet.headers )
 				.status( d.statusCode )
-				.send( data );
+				.send( data )
+				.end();
 		} else {
-			res.respond( new Response( 400, d ) );
+			return packet.respond( new Response( 400, d ) );
+		}
+
+		packet.kill();
+	};
+
+	packet.kill = () => {
+		if( !res || !packet ) {
+			return;
 		}
 
 		clearTimeout( res.timer );
-		res = null;
+
+		res.locals = req.locals = null;
 	};
 
-	res.timer = setTimeout(
-		() => !res || res.respond( new Response( 408 ) ),
-		config.timeout
-	);
-}
-
-function inspection( req, res, next ) {
-	startPacketTime( req );
-	decodeHeaders( req.headers );
-	setupResponse( req, res );
+	res.locals = req.locals = packet;
 
 	if( gonfig.log === gonfig.LEVEL.VERBOSE ) {
 		onFinished( res, ( e, d ) => {
-			if( res ) {
-				clearTimeout( res.timer );
-				res = null;
-			}
-
 			console.log( {
 				timestamp: new Date().toISOString(),
 				request: `HTTP/${ req.httpVersion } ${ req.method } ${ req.path }`,
 				response: `${ d.statusCode } ${ d.statusMessage }`,
-				in: req.headers[ 'content-length' ] || 0,
-				out: d._contentLength || 0,
-				time: req.endTime
+				in: +req.headers[ 'content-length' ] || 0,
+				out: +d._contentLength || 0,
+				time: packet.internalTime
 			} );
+
+			if( res ) {
+				packet.kill();
+				res = null;
+			}
 		} );
 	}
 
 	if( `${ req.protocol }://${ req.hostname }${ req.path }`.length >= config.maximumURISize ) {
-		return res.respond( new Response( 414, 'URI exceeds maximum length' ) );
+		return packet.respond( new Response( 414, 'URI exceeds maximum length' ) );
 	} else if( req.rawHeaders.join( '' ).length >= config.maximumHeaderSize ) {
-		return res.respond( new Response( 431 ) );
+		return packet.respond( new Response( 431 ) );
 	} else if( req.headers[ 'content-length' ] >= config.maximumPayloadSize ) {
-		return res.respond( new Response( 413, 'Payload exceeds maximum length' ) );
+		return packet.respond( new Response( 413, 'Payload exceeds maximum length' ) );
 	} else if( +req.httpVersion < config.minimumHTTPVersion ) {
-		return res.respond( new Response( 505 ) );
+		return packet.respond( new Response( 505 ) );
 	}
 
 	next();

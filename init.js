@@ -13,6 +13,8 @@ const Database = require( './src/Database' );
 
 const ipc = require( 'node-ipc' );
 
+process.title = 'lightdb';
+
 module.exports = async () => {
 	await gonfig.set( 'lanip', lanIP );
 

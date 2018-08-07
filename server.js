@@ -21,42 +21,44 @@ class LightDB
 	{
 
 	}
-	
+
 	hookRoute( item )
 	{
 		item.exec = require( resolve( item.exec ) );
-		
+
 		this.express[ item.method.toLowerCase() ](
 			item.route,
-			( req, res ) => res ?
-				item.exec( req, res ) :
+			( req, res ) => res.locals ?
+				item.exec( req, res.locals ) :
 				res.status( 500 ).send( 'unknown' )
 		);
-		
+
 		return item;
 	}
 
 	expressInitialize()
 	{
 		this.express = express();
-		
+
 		this.express.disable( 'x-powered-by' );
 		this.express.use( bodyParser.json() );
 		this.express.use( bodyParser.text() );
 		this.express.use( require( './src/inspection' )() );
-		
+
 		gonfig.set( 'api', gonfig.get( 'api' ).map( item => this.hookRoute( item ) ) );
-		
+
 		this.express.use( require( './src/captureErrors' )() );
 	}
-	
+
 	initialize()
 	{
 		this.expressInitialize();
 
 		process
-			.on( 'uncaughtException', err => debug( gonfig.getErrorReport( err ) ) )
-			.on( 'unhandledRejection', err => debug( gonfig.getErrorReport( err ) ) )
+		// .on( 'uncaughtException', err => debug( gonfig.getErrorReport( err ) ) )
+		// .on( 'unhandledRejection', err => debug( gonfig.getErrorReport( err ) ) )
+			.on( 'uncaughtException', err => debug( err ) )
+			.on( 'unhandledRejection', err => debug( err ) )
 			.on( 'SIGINT', () => {
 				debug( 'Received SIGINT, graceful shutdown...' );
 				this.shutdown( 0 );
@@ -68,13 +70,13 @@ class LightDB
 
 		return this;
 	}
-	
+
 	start()
 	{
 		return new Promise(
 			res => {
 				this.server = http.createServer( this.express );
-				
+
 				this.server.listen(
 					gonfig.get( 'server' ).port,
 					() => {
@@ -83,27 +85,27 @@ class LightDB
 							`v${ gonfig.get( 'version' ) } ` +
 							`running on ${ gonfig.get( 'lanip' ) }:${ gonfig.get( 'server' ).port }`
 						);
-						
+
 						res( this );
 					}
 				);
 			}
 		);
 	}
-	
+
 	shutdown( code = 0 )
 	{
 		if( this.server ) {
 			this.server.close();
 		}
-		
+
 		if( isClosed ) {
 			debug( 'Shutdown after SIGINT, forced shutdown...' );
 			process.exit( 0 );
 		}
-		
+
 		isClosed = true;
-		
+
 		debug( 'server exiting with code:', code );
 		process.exit( code );
 	}
