@@ -79,6 +79,7 @@ class LightDB
 
 				this.server.listen(
 					gonfig.get( 'server' ).port,
+					gonfig.get( 'server' ).host,
 					() => {
 						debug(
 							`${ gonfig.get( 'name' ) } ` +

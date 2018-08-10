@@ -6,21 +6,22 @@
 'use strict';
 
 const
+	UUIDv4 = require( 'uuid/v4' ),
 	gonfig = require( 'gonfig' ),
 	ipc    = require( 'node-ipc' );
 
-class IPC
+class IPCClient
 {
 	constructor()
 	{
-		this.id = gonfig.get( 'name' );
-
+		this.id          = gonfig.get( 'name' );
 		this.isConnected = false;
+		this.handlers    = new Map();
 
-		this.handlers = new Map();
-
+		ipc.config.silent = true;
 		ipc.connectTo(
 			this.id,
+			`/tmp/app.${ this.id }`,
 			() => ipc.of[ this.id ]
 				.on( 'connect', () => this.isConnected = true )
 				.on( 'disconnect', () => this.isConnected = false )
@@ -37,6 +38,8 @@ class IPC
 				rej = _rej;
 			}
 		);
+
+		msg = { id: UUIDv4(), msg };
 
 		this.handlers.set( msg.id, [ res, rej ] );
 
@@ -57,4 +60,4 @@ class IPC
 	}
 }
 
-module.exports = new IPC();
+module.exports = new IPCClient();

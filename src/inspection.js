@@ -90,8 +90,8 @@ function inspection( req, res, next ) {
 
 	res.locals = req.locals = packet;
 
-	if( gonfig.log === gonfig.LEVEL.VERBOSE ) {
-		onFinished( res, ( e, d ) => {
+	onFinished( res, ( e, d ) => {
+		if( gonfig.log === gonfig.LEVEL.VERBOSE ) {
 			console.log( {
 				timestamp: new Date().toISOString(),
 				request: `HTTP/${ req.httpVersion } ${ req.method } ${ req.path }`,
@@ -100,23 +100,13 @@ function inspection( req, res, next ) {
 				out: +d._contentLength || 0,
 				time: packet.internalTime
 			} );
+		}
 
-			if( res ) {
-				packet.kill();
-				res = null;
-			}
-		} );
-	}
-
-	if( `${ req.protocol }://${ req.hostname }${ req.path }`.length >= config.maximumURISize ) {
-		return packet.respond( new Response( 414, 'URI exceeds maximum length' ) );
-	} else if( req.rawHeaders.join( '' ).length >= config.maximumHeaderSize ) {
-		return packet.respond( new Response( 431 ) );
-	} else if( req.headers[ 'content-length' ] >= config.maximumPayloadSize ) {
-		return packet.respond( new Response( 413, 'Payload exceeds maximum length' ) );
-	} else if( +req.httpVersion < config.minimumHTTPVersion ) {
-		return packet.respond( new Response( 505 ) );
-	}
+		if( res ) {
+			packet.kill();
+			res = null;
+		}
+	} );
 
 	next();
 }

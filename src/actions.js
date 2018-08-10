@@ -15,6 +15,10 @@ const
 		isArray
 	}        = require( './utils' );
 
+function getDatabase() {
+	return new Response( 200, Database );
+}
+
 function getDatabaseInformation() {
 	return new Response( 200, Database.getDatabaseInformation() );
 }
@@ -273,6 +277,7 @@ function batchCreate( collection, data, parameters = {} ) {
 	}
 }
 
+module.exports.getDatabase            = getDatabase;
 module.exports.getDatabaseInformation = getDatabaseInformation;
 module.exports.listCollections        = listCollections;
 module.exports.getCollection          = getCollection;

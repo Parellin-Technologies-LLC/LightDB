@@ -7,23 +7,35 @@
 
 
 const
-	gonfig = require( 'gonfig' );
+	gonfig = require( 'gonfig' ),
+	lanIP  = require( './src/lanIP' );
 
 gonfig
-	.setLogLevel( gonfig.LEVEL.VERBOSE )
-	.setEnvironment( gonfig.ENV.DEBUG )
+	.setLogLevel( gonfig.LEVEL.NONE )
+	.setEnvironment( gonfig.ENV.DEVELOPMENT )
 	.load( 'server', 'config/server.json' )
 	.load( 'api', 'config/api.js' )
 	.refresh();
 
+gonfig.set( 'lanip', lanIP );
+
+process.title = 'lightdb';
+
 ( async () => {
-	if( gonfig.get( 'pm_id' ) ) {
-		// await require( './init' )();
+	if( gonfig.get( 'pm_id' ) === '0' ) {
+		return await require( './src/IPCServer' ).start();
+	} else if( gonfig.get( 'pm_id' ) ) {
+		await require( './src/IPCClient' );
+
+		return require( './server' )
+			.initialize()
+			.start();
+	} else {
+		await require( './src/IPCServer' ).start();
+		await require( './src/IPCClient' );
+		return require( './server' )
+			.initialize()
+			.start();
 	}
-	
-	await require( './init' )();
-	
-	require( './server' )
-		.initialize()
-		.start();
+
 } )();
