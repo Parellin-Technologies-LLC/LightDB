@@ -10,7 +10,7 @@ const
 	{ resolve }      = require( 'path' ),
 	LightMap         = require( '@parellin/lightmap' ),
 	Response         = require( 'http-response-class' ),
-	IPCClient        = require( '../src/IPCClient' ),
+	IPCClient        = require( '../lib/IPCClient' ),
 	htmlPage         = readFileSync( resolve( 'ui/index.html' ), 'utf8' );
 
 module.exports = ( req, res ) => {

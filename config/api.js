@@ -11,46 +11,46 @@ module.exports = [
 	{
 		route: '/',
 		method: 'GET',
-		exec: resolve( './lib/index' )
+		exec: resolve( './api/index' )
 	},
 	{
 		route: '/',
 		method: 'POST',
-		exec: resolve( './lib/task' )
+		exec: resolve( './api/task' )
 	},
 	{
 		route: '/docs',
 		method: 'ALL',
-		exec: resolve( './lib/docs' )
+		exec: resolve( './api/docs' )
 	},
 	{
 		route: '/kill',
 		method: 'ALL',
-		exec: resolve( './lib/kill' )
+		exec: resolve( './api/kill' )
 	},
 	{
 		route: '/ping',
 		method: 'ALL',
-		exec: resolve( './lib/ping' )
+		exec: resolve( './api/ping' )
 	},
 	{
 		route: '/json',
 		method: 'GET',
-		exec: resolve( './lib/json' )
+		exec: resolve( './api/json' )
 	},
 	{
 		route: '/ui',
 		method: 'GET',
-		exec: resolve( './lib/ui' )
+		exec: resolve( './api/ui' )
 	},
 	{
 		route: '/version',
 		method: 'ALL',
-		exec: resolve( './lib/version' )
+		exec: resolve( './api/version' )
 	},
 	{
 		route: '*',
 		method: 'ALL',
-		exec: resolve( './lib/methodNotAllowed' )
+		exec: resolve( './api/methodNotAllowed' )
 	}
 ];

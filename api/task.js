@@ -6,10 +6,10 @@
 'use strict';
 
 const
-	{ Task, validate } = require( '../src/validate' ),
+	{ Task, validate } = require( '../lib/validate' ),
 	Response           = require( 'http-response-class' ),
-	IPCClient          = require( '../src/IPCClient' ),
-	actions            = require( '../src/actions' );
+	IPCClient          = require( '../lib/IPCClient' ),
+	actions            = require( '../lib/actions' );
 
 module.exports = ( req, res ) => {
 	return validate( Task, req.body )
@@ -23,6 +23,7 @@ module.exports = ( req, res ) => {
 				return IPCClient.emit( { action, collection, data, parameters } );
 			}
 		} )
+		.then( d => ( console.log( d ), d ) )
 		.then( d => res.respond( d ) )
 		.catch(
 			e => e instanceof Response ?

@@ -21,7 +21,7 @@ config.port = 23001;
 
 describe( 'LightDB', () => {
 	let
-		server = require( '../server' )( config ),
+		server = require( '../index' )( config ),
 		table, app;
 
 	it( 'should have instance of express',
@@ -57,8 +57,7 @@ describe( 'LightDB', () => {
 
 	it( 'should start the program', function( done ) {
 		this.timeout( 5000 );
-		server.start()
-			.then( () => done() );
+		server.onStart( () => done() );
 	} );
 
 	it( 'should have bind to port', () => {

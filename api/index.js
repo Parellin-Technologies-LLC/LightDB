@@ -1,18 +1,17 @@
 /** ****************************************************************************************************
- * File: kill.js
- * Project: LightDB
- * @author Nick Soggin <iSkore@users.noreply.github.com> on 30-May-2018
+ * @file: index.js
+ * @project: LightDB
+ * @author Nick Soggin <iSkore@users.noreply.github.com> on 31-May-2018
  *******************************************************************************************************/
 'use strict';
 
 const
-	Response = require( 'http-response-class' ),
-	server   = require( '../server' );
+	Response  = require( 'http-response-class' ),
+	IPCClient = require( '../lib/IPCClient' );
 
 module.exports = ( req, res ) => {
-	return Promise.resolve( 'server terminated' )
-		.then( d => res.respond( new Response( 200, d ) ) )
-		.then( () => server.shutdown( 0 ) )
+	return IPCClient.emit( { action: 'getDatabaseInformation' } )
+		.then( d => res.respond( d ) )
 		.catch(
 			e => e instanceof Response ?
 				res.respond( e ) :
