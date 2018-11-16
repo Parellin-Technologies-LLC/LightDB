@@ -28,6 +28,7 @@ function inspection( req, res, next ) {
 			'Access-Control-Allow-Origin': '*',
 			'Access-Control-Max-Age': 1728000,
 			'Content-Type': 'application/json; charset=utf-8',
+			'ClusterID': gonfig.get( 'pm_id' ),
 			RequestID: id
 		},
 		ContentLength: req.headers[ 'content-length' ],

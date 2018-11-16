@@ -11,7 +11,7 @@ const
 	lanIP  = require( './src/lanIP' );
 
 gonfig
-	.setLogLevel( gonfig.LEVEL.NONE )
+	.setLogLevel( gonfig.LEVEL.DEBUG )
 	.setEnvironment( gonfig.ENV.DEVELOPMENT )
 	.load( 'server', 'config/server.json' )
 	.load( 'api', 'config/api.js' )
@@ -22,6 +22,7 @@ gonfig.set( 'lanip', lanIP );
 process.title = 'lightdb';
 
 ( async () => {
+	// If we are running PM2, start IPCServer
 	if( gonfig.get( 'pm_id' ) === '0' ) {
 		return await require( './src/IPCServer' ).start();
 	} else if( gonfig.get( 'pm_id' ) ) {
