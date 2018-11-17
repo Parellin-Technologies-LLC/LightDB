@@ -106,7 +106,7 @@ class LightDB extends io.Entrypoint
 		debug( 'start' );
 
 		this.server = http.createServer( this.express );
-
+		
 		this.server.listen(
 			gonfig.get( 'server' ).port,
 			gonfig.get( 'server' ).host,
@@ -150,13 +150,11 @@ class LightDB extends io.Entrypoint
 
 	sensors()
 	{
-		console.log( 'sensors' );
 		this.reqMeter = this.io.meter( 'req/min' );
 	}
 
 	actuators()
 	{
-		console.log( 'actuators' );
 		this.io.action( 'getApp', reply => reply( { server: this.server } ) );
 		this.io.action( 'getEnv', reply => reply( { env: process.env } ) );
 	}

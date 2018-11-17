@@ -16,9 +16,8 @@ const
 module.exports = ( req, res ) => {
 	return Promise.resolve( htmlPage )
 		.then( async file => {
-			const
-				lm                    = new LightMap(),
-				{ data: collections } = await IPCClient.emit( { action: 'listCollections' } );
+			const lm                  = new LightMap();
+			let { data: collections } = await IPCClient.emit( { action: 'listCollections' } );
 			
 			lm.set( '{{ collections }}', collections.reduce(
 				( r, i ) => {
@@ -27,14 +26,14 @@ module.exports = ( req, res ) => {
 				}, ''
 			) );
 			
-			lm.set( '{{ tabBody }}', collections.reduce(
-				( r, i ) => {
-					// const items = [ ...Database.getCollection( i ).listItems() ];
-					const { data: items } = IPCClient.emit( { action: 'listItems', collection: i } );
+			collections = await collections.reduce(
+				async ( r, i ) => {
+					let items      = await r;
+					const { data } = await IPCClient.emit( { action: 'listItems', collection: i } );
 					
 					let table = `<table style="width:100%"><tr><th>_id</th><th>item</th><th>tags</th></tr>`;
 					
-					items.forEach(
+					data.forEach(
 						item => {
 							table += '<tr>';
 							table += `<td style="width:10%">${ item._id }</td>`;
@@ -46,17 +45,17 @@ module.exports = ( req, res ) => {
 					
 					table += '</table>';
 					
-					r += `<div id="${ i }" class="tabcontent">` +
+					items += `<div id="${ i }" class="tabcontent">` +
 						`<h3>${ i }</h3>` +
 						// `<p>${ info }</p>` +
 						`<div>${ table }</div>` +
 						'</div>';
 					
-					return r;
-				}, ''
-			) );
+					return items;
+				}, Promise.resolve( '' )
+			);
 			
-			console.log( lm );
+			lm.set( '{{ tabBody }}', collections );
 			
 			return file.replace( lm );
 		} )

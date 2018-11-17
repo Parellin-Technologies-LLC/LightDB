@@ -23,7 +23,6 @@ module.exports = ( req, res ) => {
 				return IPCClient.emit( { action, collection, data, parameters } );
 			}
 		} )
-		.then( d => ( console.log( d ), d ) )
 		.then( d => res.respond( d ) )
 		.catch(
 			e => e instanceof Response ?
